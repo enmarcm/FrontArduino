@@ -1,43 +1,47 @@
 import { useState, useEffect } from "react";
+import { io, Socket } from "socket.io-client";
 import morseToText from "../utils/morseToText";
 
 const useWebSocket = (url: string) => {
   const [receivedMorse, setReceivedMorse] = useState("");
   const [translatedText, setTranslatedText] = useState("");
+  const [isTransmitting, setIsTransmitting] = useState(false);
 
   useEffect(() => {
-    let ws: WebSocket;
+    const socket: Socket = io(url);
 
-    const connect = () => {
-      ws = new WebSocket(url);
+    socket.on("connect", () => {
+      console.log("Socket.IO connected");
+    });
 
-      ws.onopen = () => {
-        console.log("WebSocket connected");
-      };
+    socket.on("message", (data: string) => {
+      if (data.includes("INIT")) {
+        alert("Llegó transmisión");
+        setIsTransmitting(true);
+        setReceivedMorse("INIT");
+        setTranslatedText("");
+      } else if (data.includes("END")) {
+        alert("Terminó transmisión");
+        setIsTransmitting(false);
+        setReceivedMorse((prev) => prev + "END");
+      } else if (isTransmitting) {
+        setReceivedMorse((prev) => prev + data);
+        setTranslatedText((prev) => prev + morseToText(data));
+      }
+    });
 
-      ws.onmessage = (event) => {
-        const morseData = event.data;
-        setReceivedMorse(morseData);
-        setTranslatedText(morseToText(morseData));
-      };
+    socket.on("disconnect", () => {
+      console.log("Socket.IO disconnected. Reconnecting...");
+    });
 
-      ws.onclose = () => {
-        console.log("WebSocket closed. Reconnecting...");
-        setTimeout(connect, 1000);
-      };
-
-      ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        ws.close();
-      };
-    };
-
-    connect();
+    socket.on("connect_error", (error: any) => {
+      console.error("Socket.IO connection error:", error);
+    });
 
     return () => {
-      ws.close();
+      socket.disconnect();
     };
-  }, [url]);
+  }, [url, isTransmitting]);
 
   return { receivedMorse, translatedText };
 };
