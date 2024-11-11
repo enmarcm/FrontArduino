@@ -8,7 +8,7 @@ import Modalito from "../components/Modalito";
 import FirstTab from "../components/FirstTab";
 import SecundTab from "../components/SecundTab";
 import useWebSocket from "../hooks/useWebSocket";
-import useMorseConverter from "../hooks/useMorseConverter"; 
+import useMorseConverter from "../hooks/useMorseConverter";
 import Loading from "../components/Loading";
 
 interface TabPanelProps {
@@ -78,9 +78,11 @@ function Main() {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-900 text-white">
-      <div className="my-6 p-2 mx-auto text-red">LOGO AQUi</div>
+      <div className=" p-1 mx-auto text-red">
+        <img src="logo.png" alt="Logo Arduino" className="h-32" />
+      </div>
 
-      <div className="mt-2 flex flex-col flex-grow">
+      <div className="flex flex-col flex-grow">
         <Box
           sx={{ width: "100%", height: "100%" }}
           className="h-full w-full flex flex-col"
