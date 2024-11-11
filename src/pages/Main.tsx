@@ -51,7 +51,7 @@ function Main() {
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const morseText = useMorseConverter(inputText);
-  const { receivedMorse, translatedText } = useWebSocket(CONSTANTS.URL);
+  const { receivedMorse, translatedText } = useWebSocket(CONSTANTS.URL_WS);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -68,7 +68,7 @@ function Main() {
   const handleSendArduino = async () => {
     setLoading(true);
     const response = await Fetcho({
-      url: CONSTANTS.URL,
+      url: CONSTANTS.URL_SEND,
       method: "POST",
       body: { morse: morseText },
     });

@@ -1,5 +1,10 @@
-enum CONSTANTS{
-    URL = "https://localhost:3000",
+const BASE_URL = "https://localhost:3000";
+const WS = "https://localhost:8080";
+
+enum CONSTANTS {
+  URL = `${BASE_URL}`,
+  URL_SEND = `${BASE_URL}/send`,
+  URL_WS = WS,
 }
 
-export default CONSTANTS
+export default CONSTANTS;
