@@ -6,13 +6,33 @@ const useWebSocket = (url: string) => {
   const [translatedText, setTranslatedText] = useState("");
 
   useEffect(() => {
-    const ws = new WebSocket(url);
+    let ws: WebSocket;
 
-    ws.onmessage = (event) => {
-      const morseData = event.data;
-      setReceivedMorse(morseData);
-      setTranslatedText(morseToText(morseData));
+    const connect = () => {
+      ws = new WebSocket(url);
+
+      ws.onopen = () => {
+        console.log("WebSocket connected");
+      };
+
+      ws.onmessage = (event) => {
+        const morseData = event.data;
+        setReceivedMorse(morseData);
+        setTranslatedText(morseToText(morseData));
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket closed. Reconnecting...");
+        setTimeout(connect, 1000);
+      };
+
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        ws.close();
+      };
     };
+
+    connect();
 
     return () => {
       ws.close();

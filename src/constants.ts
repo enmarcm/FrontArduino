@@ -1,5 +1,5 @@
 const BASE_URL = "https://localhost:3000";
-const WS = "https://localhost:8080";
+const WS = "http://localhost:8080";
 
 enum CONSTANTS {
   URL = `${BASE_URL}`,

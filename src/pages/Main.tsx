@@ -10,33 +10,7 @@ import SecundTab from "../components/SecundTab";
 import useWebSocket from "../hooks/useWebSocket";
 import useMorseConverter from "../hooks/useMorseConverter";
 import Loading from "../components/Loading";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-      className="h-full w-full"
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }} className="h-full w-full">
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
+import CustomTabPanel from "../components/CustomTabPanel";
 
 function a11yProps(index: number) {
   return {
@@ -94,8 +68,8 @@ function Main() {
               aria-label="TABS"
               centered
             >
-              <Tab label="Enviar" {...a11yProps(0)} />
-              <Tab label="Recibir" {...a11yProps(1)} />
+              <Tab label="Enviar" {...a11yProps(0)} sx={{ color: 'white' }} />
+              <Tab label="Recibir" {...a11yProps(1)} sx={{ color: 'white' }} />
             </Tabs>
           </Box>
           <Box className="flex-grow h-full w-full">
