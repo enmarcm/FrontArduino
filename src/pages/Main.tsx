@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import Fetcho from "../utils/Fetcho";
 import CONSTANTS from "../constants";
-import morseToText from "../utils/morseToText";
-import textToMorse from "../utils/textToMorse";
 import Modalito from "../components/Modalito";
 import FirstTab from "../components/FirstTab";
 import SecundTab from "../components/SecundTab";
+import useWebSocket from "../hooks/useWebSocket";
+import useMorseConverter from "../hooks/useMorseConverter"; 
+import Loading from "../components/Loading";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -48,11 +48,10 @@ function a11yProps(index: number) {
 function Main() {
   const [value, setValue] = useState(0);
   const [inputText, setInputText] = useState("");
-  const [morseText, setMorseText] = useState("");
-  const [receivedMorse, setReceivedMorse] = useState("");
-  const [translatedText, setTranslatedText] = useState("");
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(false);
+  const morseText = useMorseConverter(inputText);
+  const { receivedMorse, translatedText } = useWebSocket(CONSTANTS.URL);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -61,24 +60,6 @@ function Main() {
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(event.target.value);
   };
-
-  useEffect(() => {
-    setMorseText(textToMorse(inputText));
-  }, [inputText]);
-
-  useEffect(() => {
-    const ws = new WebSocket(CONSTANTS.URL);
-
-    ws.onmessage = (event) => {
-      const morseData = event.data;
-      setReceivedMorse(morseData);
-      setTranslatedText(morseToText(morseData));
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, []);
 
   const handleClose = () => {
     setOpen(false);
@@ -97,9 +78,7 @@ function Main() {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-900 text-white">
-      <div className="mt-6 mb-2 mx-auto text-red">
-        <img src="logo.png" alt="ARDUINO" className="h-32" />
-      </div>
+      <div className="my-6 p-2 mx-auto text-red">LOGO AQUi</div>
 
       <div className="mt-2 flex flex-col flex-grow">
         <Box
@@ -146,12 +125,7 @@ function Main() {
         closeText="Entendido"
       />
 
-      {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <CircularProgress color="inherit" />
-          <span className="ml-4 text-white">Enviando...</span>
-        </div>
-      )}
+      {loading && <Loading />}
     </div>
   );
 }
